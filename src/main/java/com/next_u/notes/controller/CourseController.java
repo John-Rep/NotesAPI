@@ -3,6 +3,7 @@ package com.next_u.notes.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,16 +25,26 @@ public class CourseController {
 	@Autowired
 	private CourseRepository courseRepository;
 
-	@GetMapping("/")
+	@GetMapping("")
 	public List<Course> getCourses() {
 		return courseRepository.findAll();
 	}
 
-	@PostMapping("/")
-	public Course postCourse(@RequestBody CourseDTO courseDTO) {
+	@GetMapping("/{id}")
+	public ResponseEntity<Course> getCourseById(@PathVariable Long id) {
+		Course course = courseRepository.findById(id).orElse(null);
+		if (course != null) {
+			return ResponseEntity.ok(course);
+		}
+		return ResponseEntity.notFound().build();
+	}
+
+	@PostMapping("")
+	public ResponseEntity<Course> postCourse(@RequestBody CourseDTO courseDTO) {
 		Course course = new Course();
 		course.setTitle(courseDTO.getTitle());
-		return courseRepository.save(course);
+		courseRepository.save(course);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@PutMapping("/{id}")
