@@ -27,20 +27,24 @@ public class GradeController {
 	@Autowired
 	private GradeRepository gradeRepository;
 	@Autowired
-	CourseRepository courseRepository;
+	private CourseRepository courseRepository;
 	@Autowired
-	StudentRepository studentRepository;
+	private StudentRepository studentRepository;
 
-	@GetMapping("")
-	public List<Grade> getgrades() {
-		return gradeRepository.findAll();
+	@GetMapping("student/{id}")
+	public ResponseEntity<List<Grade>> GetGradesByStudentId(@PathVariable Long id) {
+		List<Grade> grades = gradeRepository.findByStudentId(id);
+		if (!grades.isEmpty()) {
+			return ResponseEntity.ok(grades);
+		}
+		return ResponseEntity.notFound().build();
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Grade> getgradeById(@PathVariable Long id) {
-		Grade grade = gradeRepository.findById(id).orElse(null);
-		if (grade != null) {
-			return ResponseEntity.ok(grade);
+	@GetMapping("course/{id}")
+	public ResponseEntity<List<Grade>> GetGradesByCourseId(@PathVariable Long id) {
+		List<Grade> grades = gradeRepository.findByCourseId(id);
+		if (!grades.isEmpty()) {
+			return ResponseEntity.ok(grades);
 		}
 		return ResponseEntity.notFound().build();
 	}
